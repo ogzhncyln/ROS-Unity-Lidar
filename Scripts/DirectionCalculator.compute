@@ -1,0 +1,24 @@
+
+#pragma kernel CSMain
+
+RWStructuredBuffer<float3> directions;
+
+int num_h_scans;
+int num_v_scans;
+
+float ang_h_delta;
+float ang_v_delta;
+
+float ang_v_max;
+
+int start_indx;
+
+[numthreads(10,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint index = id.y * num_h_scans + id.x + start_indx;
+    float h_ang = (float)((id.x + start_indx) * ang_h_delta);
+    float v_ang = ang_v_max/2 - (float)(id.y * ang_v_delta);
+
+    directions[index] = float3(cos(h_ang),sin(v_ang),sin(h_ang));
+}
